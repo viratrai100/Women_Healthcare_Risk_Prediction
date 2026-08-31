@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: Women_Healthcare_Risk_Predction
+Version: 0.0.1
+Author: HackScouts
+Author-email: 22shivamgupta05@gmail.com
+Requires-Dist: pandas
+Dynamic: author
+Dynamic: author-email
+Dynamic: requires-dist

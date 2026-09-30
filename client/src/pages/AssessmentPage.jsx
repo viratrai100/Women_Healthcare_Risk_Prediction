@@ -48,6 +48,11 @@ const STEP_FIELDS = {
     'personal.ethnicity',
     'personal.pregnancyStatus',
     'personal.menopausalStatus',
+    'personal.systolicBP',
+    'personal.diastolicBP',
+    'personal.bloodSugar',
+    'personal.bodyTemp',
+    'personal.heartRate',
   ],
   medical: [
     'medical.existingConditions',
@@ -114,6 +119,11 @@ function buildPayload(data) {
       ethnicity:        data.personal.ethnicity       || undefined,
       pregnancyStatus:  data.personal.pregnancyStatus || undefined,
       menopausalStatus: data.personal.menopausalStatus || undefined,
+      systolicBP:       Number.isFinite(data.personal.systolicBP)  ? data.personal.systolicBP  : undefined,
+      diastolicBP:      Number.isFinite(data.personal.diastolicBP) ? data.personal.diastolicBP : undefined,
+      bloodSugar:       Number.isFinite(data.personal.bloodSugar)  ? data.personal.bloodSugar  : undefined,
+      bodyTemp:         Number.isFinite(data.personal.bodyTemp)    ? data.personal.bodyTemp    : undefined,
+      heartRate:        Number.isFinite(data.personal.heartRate)   ? data.personal.heartRate   : undefined,
     },
     medical: {
       existingConditions:   data.medical.existingConditions  || [],

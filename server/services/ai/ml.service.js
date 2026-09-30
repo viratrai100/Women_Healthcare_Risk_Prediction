@@ -52,7 +52,127 @@ const PROVIDER_NAME = 'ml';
  * @property {object}   recommendation — action to suggest when rule fires
  */
 const SCORING_RULES = [
-  // ── Biometric rules ─────────────────────────────────────────────────────
+  // ── Maternal & Clinical Vitals Rules (Dataset Model Alignment) ───────────
+  {
+    id: 'systolic_bp_stage2',
+    factor: 'Stage 2 Systolic Hypertension (≥140 mmHg)',
+    category: 'biometric',
+    disease: 'Hypertension / Pre-eclampsia',
+    test: (d) => {
+      const sbp = Number(d.personal?.systolicBP ?? d.vitals?.systolicBP ?? d.systolicBP);
+      return sbp >= 140;
+    },
+    weight: 22,
+    description: 'Systolic blood pressure ≥140 mmHg is a critical maternal and cardiovascular risk indicator.',
+    recommendation: { priority: 'urgent', category: 'Cardiovascular', action: 'Urgent medical evaluation for hypertension/pre-eclampsia. Daily BP monitoring.' },
+  },
+  {
+    id: 'systolic_bp_stage1',
+    factor: 'Elevated Systolic Blood Pressure (130–139 mmHg)',
+    category: 'biometric',
+    disease: 'Hypertension / Cardiovascular',
+    test: (d) => {
+      const sbp = Number(d.personal?.systolicBP ?? d.vitals?.systolicBP ?? d.systolicBP);
+      return sbp >= 130 && sbp < 140;
+    },
+    weight: 12,
+    description: 'Systolic BP in the 130–139 mmHg range represents Stage 1 hypertension.',
+    recommendation: { priority: 'high', category: 'Cardiovascular', action: 'Adopt a low-sodium diet, increase aerobic exercise, and recheck BP weekly.' },
+  },
+  {
+    id: 'diastolic_bp_stage2',
+    factor: 'Stage 2 Diastolic Hypertension (≥90 mmHg)',
+    category: 'biometric',
+    disease: 'Hypertension / Pre-eclampsia',
+    test: (d) => {
+      const dbp = Number(d.personal?.diastolicBP ?? d.vitals?.diastolicBP ?? d.diastolicBP);
+      return dbp >= 90;
+    },
+    weight: 18,
+    description: 'Diastolic BP ≥90 mmHg indicates significant systemic vascular resistance.',
+    recommendation: { priority: 'urgent', category: 'Cardiovascular', action: 'Consult physician immediately for blood pressure management and urinalysis.' },
+  },
+  {
+    id: 'diastolic_bp_stage1',
+    factor: 'Elevated Diastolic Blood Pressure (80–89 mmHg)',
+    category: 'biometric',
+    disease: 'Hypertension / Cardiovascular',
+    test: (d) => {
+      const dbp = Number(d.personal?.diastolicBP ?? d.vitals?.diastolicBP ?? d.diastolicBP);
+      return dbp >= 80 && dbp < 90;
+    },
+    weight: 8,
+    description: 'Diastolic BP in 80–89 mmHg is elevated and requires monitoring.',
+    recommendation: { priority: 'medium', category: 'Cardiovascular', action: 'Limit sodium and caffeine; monitor blood pressure regularly.' },
+  },
+  {
+    id: 'blood_sugar_high',
+    factor: 'High Blood Sugar (≥11.0 mmol/L / ≥180 mg/dL)',
+    category: 'biometric',
+    disease: 'Diabetes / Gestational Diabetes',
+    test: (d) => {
+      const bs = Number(d.personal?.bloodSugar ?? d.vitals?.bloodSugar ?? d.bs ?? d.BS);
+      // Normalized: if entered in mg/dL (>30), check >180, else mmol/L >= 11
+      return bs > 30 ? bs >= 180 : bs >= 11;
+    },
+    weight: 24,
+    description: 'Significantly elevated blood glucose indicates hyperglycemia or uncontrolled diabetes.',
+    recommendation: { priority: 'urgent', category: 'Metabolic', action: 'Urgent HbA1c test and endocrinologist or OB-GYN consultation.' },
+  },
+  {
+    id: 'blood_sugar_elevated',
+    factor: 'Elevated Blood Sugar (7.2–10.9 mmol/L / 126–179 mg/dL)',
+    category: 'biometric',
+    disease: 'Diabetes / Gestational Diabetes',
+    test: (d) => {
+      const bs = Number(d.personal?.bloodSugar ?? d.vitals?.bloodSugar ?? d.bs ?? d.BS);
+      return bs > 30 ? (bs >= 126 && bs < 180) : (bs >= 7.2 && bs < 11);
+    },
+    weight: 12,
+    description: 'Elevated glucose levels indicate pre-diabetes or gestational glucose intolerance.',
+    recommendation: { priority: 'high', category: 'Metabolic', action: 'Follow a low-glycemic Mediterranean diet and track fasting glucose.' },
+  },
+  {
+    id: 'body_temp_fever',
+    factor: 'Elevated Body Temperature / Pyrexia (≥100°F)',
+    category: 'biometric',
+    disease: 'Infection / Sepsis Risk',
+    test: (d) => {
+      const temp = Number(d.personal?.bodyTemp ?? d.vitals?.bodyTemp ?? d.bodyTemp ?? d.BodyTemp);
+      return temp >= 100.0;
+    },
+    weight: 16,
+    description: 'Body temperature ≥100°F indicates an active infection or inflammatory response.',
+    recommendation: { priority: 'urgent', category: 'Infection', action: 'Check for underlying infection, stay hydrated, and consult a doctor if persistent.' },
+  },
+  {
+    id: 'heart_rate_tachycardia',
+    factor: 'Elevated Heart Rate / Tachycardia (≥90 bpm)',
+    category: 'biometric',
+    disease: 'Cardiovascular / Thyroid Disorder',
+    test: (d) => {
+      const hr = Number(d.personal?.heartRate ?? d.vitals?.heartRate ?? d.heartRate ?? d.HeartRate);
+      return hr >= 90;
+    },
+    weight: 10,
+    description: 'Resting heart rate ≥90 bpm can reflect cardiovascular stress, dehydration, or thyroid overactivity.',
+    recommendation: { priority: 'medium', category: 'Cardiovascular', action: 'Track resting heart rate, minimize stimulants, and evaluate thyroid/cardiac function.' },
+  },
+  {
+    id: 'high_risk_age',
+    factor: 'Advanced or Adolescent Maternal Age',
+    category: 'biometric',
+    disease: 'Pregnancy Complications',
+    test: (d) => {
+      const age = Number(d.personal?.age ?? d.age);
+      return age >= 35 || (age > 0 && age < 18);
+    },
+    weight: 10,
+    description: 'Maternal age <18 or ≥35 is clinically associated with higher pregnancy risks.',
+    recommendation: { priority: 'medium', category: 'Reproductive', action: 'Ensure closer prenatal monitoring and routine anomaly/glucose screenings.' },
+  },
+
+  // ── Biometric BMI rules ─────────────────────────────────────────────────────
   {
     id: 'bmi_overweight',
     factor: 'BMI Overweight (25–30)',

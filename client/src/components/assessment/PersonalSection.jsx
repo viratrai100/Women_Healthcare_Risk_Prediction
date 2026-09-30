@@ -226,6 +226,98 @@ function PersonalSection() {
           ))}
         </SelectField>
       </div>
+
+      {/* ── Clinical Biometrics & Vitals (Maternal Health Model Features) ── */}
+      <div className="mt-4 p-5 rounded-xl border border-primary-500/30 bg-gradient-to-br from-primary-950/40 via-surface-card to-surface-card/90">
+        <div className="flex items-center gap-2.5 mb-2">
+          <span className="text-xl">🩺</span>
+          <div>
+            <h3 className="text-base font-semibold text-white">Clinical Vitals & Biometrics</h3>
+            <p className="text-xs text-slate-400">
+              Directly used by the AI/ML maternal health predictor for precision risk profiling.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+          <InputField
+            id="personal-systolic-bp"
+            label="Systolic BP (mmHg)"
+            type="number"
+            min={50}
+            max={260}
+            placeholder="e.g. 120 (Normal < 120)"
+            error={e.systolicBP?.message}
+            {...register('personal.systolicBP', {
+              min: { value: 50, message: 'Min 50 mmHg' },
+              max: { value: 260, message: 'Max 260 mmHg' },
+              valueAsNumber: true,
+            })}
+          />
+
+          <InputField
+            id="personal-diastolic-bp"
+            label="Diastolic BP (mmHg)"
+            type="number"
+            min={30}
+            max={180}
+            placeholder="e.g. 80 (Normal < 80)"
+            error={e.diastolicBP?.message}
+            {...register('personal.diastolicBP', {
+              min: { value: 30, message: 'Min 30 mmHg' },
+              max: { value: 180, message: 'Max 180 mmHg' },
+              valueAsNumber: true,
+            })}
+          />
+
+          <InputField
+            id="personal-blood-sugar"
+            label="Blood Sugar / BS (mmol/L or mg/dL)"
+            type="number"
+            step="0.1"
+            min={1}
+            max={500}
+            placeholder="e.g. 7.0 mmol/L or 126 mg/dL"
+            error={e.bloodSugar?.message}
+            {...register('personal.bloodSugar', {
+              min: { value: 1, message: 'Min 1' },
+              max: { value: 500, message: 'Max 500' },
+              valueAsNumber: true,
+            })}
+          />
+
+          <InputField
+            id="personal-body-temp"
+            label="Body Temperature (°F)"
+            type="number"
+            step="0.1"
+            min={80}
+            max={115}
+            placeholder="e.g. 98.6"
+            error={e.bodyTemp?.message}
+            {...register('personal.bodyTemp', {
+              min: { value: 80, message: 'Min 80 °F' },
+              max: { value: 115, message: 'Max 115 °F' },
+              valueAsNumber: true,
+            })}
+          />
+
+          <InputField
+            id="personal-heart-rate"
+            label="Heart Rate / Pulse (bpm)"
+            type="number"
+            min={30}
+            max={240}
+            placeholder="e.g. 72 (Normal 60–100)"
+            error={e.heartRate?.message}
+            {...register('personal.heartRate', {
+              min: { value: 30, message: 'Min 30 bpm' },
+              max: { value: 240, message: 'Max 240 bpm' },
+              valueAsNumber: true,
+            })}
+          />
+        </div>
+      </div>
     </div>
   );
 }

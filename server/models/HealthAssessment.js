@@ -27,6 +27,12 @@ const personalSchema = new mongoose.Schema(
     ethnicity:      { type: String, trim: true, maxlength: 80 },
     pregnancyStatus:{ type: String, enum: ['not_pregnant','pregnant','postpartum','not_applicable'] },
     menopausalStatus:{ type: String, enum: ['pre_menopausal','peri_menopausal','post_menopausal','not_applicable'] },
+    // ── Clinical Vitals (Dataset Model Features) ───────────────────────────
+    systolicBP:     { type: Number, min: 50, max: 260 }, // mmHg
+    diastolicBP:    { type: Number, min: 30, max: 180 }, // mmHg
+    bloodSugar:     { type: Number, min: 1,  max: 500 }, // mmol/L or mg/dL
+    bodyTemp:       { type: Number, min: 80, max: 115 }, // °F
+    heartRate:      { type: Number, min: 30, max: 240 }, // bpm
   },
   { _id: false }
 );

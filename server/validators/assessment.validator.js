@@ -14,6 +14,16 @@ export const personalRules = [
   body('personal.bloodGroup').optional()
     .isIn(['A+','A-','B+','B-','AB+','AB-','O+','O-','Unknown'])
     .withMessage('Invalid blood group'),
+  body('personal.systolicBP').optional({ nullable: true })
+    .isFloat({ min: 50, max: 260 }).withMessage('Systolic BP must be between 50 and 260 mmHg'),
+  body('personal.diastolicBP').optional({ nullable: true })
+    .isFloat({ min: 30, max: 180 }).withMessage('Diastolic BP must be between 30 and 180 mmHg'),
+  body('personal.bloodSugar').optional({ nullable: true })
+    .isFloat({ min: 1, max: 500 }).withMessage('Blood sugar must be valid level'),
+  body('personal.bodyTemp').optional({ nullable: true })
+    .isFloat({ min: 80, max: 115 }).withMessage('Body temperature must be between 80 and 115 °F'),
+  body('personal.heartRate').optional({ nullable: true })
+    .isFloat({ min: 30, max: 240 }).withMessage('Heart rate must be between 30 and 240 bpm'),
 ];
 
 // ── Medical section ───────────────────────────────────────────────────────────
